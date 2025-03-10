@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqldb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: product_db
+      MYSQL_USER: rk
+      MYSQL_PASSWORD: rk
+    ports:
+      - "3307:3306"  # Exposes MySQL externally on port 3307
+    networks:
+      - springboot-mysql-net
+
+  springbootapp:
+    build: .
+    container_name: springbootapp
+    restart: always
+    depends_on:
+      - mysqldb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/product_db?createDatabaseIfNotExists=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: rk
+      SPRING_DATASOURCE_PASSWORD: rk
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+    ports:
+      - "8080:8080"
+    networks:
+      - springboot-mysql-net
+
+networks:
+  springboot-mysql-net:
