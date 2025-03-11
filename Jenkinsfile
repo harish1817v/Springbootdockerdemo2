@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Build Application') {
             steps {
-                sh 'chmod +x ./mvnw'  // Add this line
+                sh 'chmod +x ./mvnw'
                 sh './mvnw clean package -DskipTests'
             }
         }
@@ -19,6 +19,11 @@ pipeline {
         }
         stage('Run Docker Compose') {
             steps {
+                // Stop and remove existing container if running
+                sh 'docker stop springbootapp || true'
+                sh 'docker rm springbootapp || true'
+
+                // Start fresh container
                 sh 'docker-compose up -d'
             }
         }
