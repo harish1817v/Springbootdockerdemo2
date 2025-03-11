@@ -8,6 +8,7 @@ pipeline {
         }
         stage('Build Application') {
             steps {
+                sh 'chmod +x ./mvnw'  // Add this line
                 sh './mvnw clean package -DskipTests'
             }
         }
