@@ -1,48 +1,33 @@
 pipeline {
     agent any
-
-    environment {
-        IMAGE_NAME = 'springbootdockerdemo2-springbootapp'
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/harish1817v/Springbootdockerdemo2.git'
+                git branch: 'main', url: 'https://github.com/harish1817v/Springbootdockerdemo2.git'
             }
         }
-
         stage('Build Application') {
             steps {
                 sh './mvnw clean package -DskipTests'
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                sh 'docker build -t springbootdocker .'
             }
         }
-
         stage('Run Docker Compose') {
             steps {
-                sh 'docker-compose up --build -d'
-            }
-        }
-
-        stage('Post Build Cleanup') {
-            steps {
-                sh 'docker ps -a'
+                sh 'docker-compose up -d'
             }
         }
     }
-
     post {
         success {
-            echo 'Build and Deployment Successful 🎯'
+            echo "Build Successful ✅"
         }
         failure {
-            echo 'Build Failed ❌'
+            echo "Build Failed ❌"
         }
     }
 }
